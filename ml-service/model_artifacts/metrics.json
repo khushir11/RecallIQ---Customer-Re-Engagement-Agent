@@ -1,0 +1,4 @@
+{
+  "status": "not_trained",
+  "message": "Run train.py with an appropriately licensed churn dataset to generate metrics.json."
+}

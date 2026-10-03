@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RecallIQ | AI Customer Re-Engagement Agent</title>
+    <meta
+      name="description"
+      content="RecallIQ is an AI marketing and engagement tool that detects at-risk customers, recommends the best channel, and launches personalized re-engagement campaigns."
+    />
+    <link rel="preload" href="assets/agent-command-center.png" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#dashboard" aria-label="RecallIQ home">
+        <span class="brand-mark">R</span>
+        <span>RecallIQ</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#agent">Agent</a>
+        <a href="#data">Data</a>
+        <a href="#channels">Channels</a>
+        <a href="#operations">Operations</a>
+        <a href="#insights">Insights</a>
+      </nav>
+      <a class="topbar-action" href="#campaigns">Launch campaign</a>
+    </header>
+
+    <main id="dashboard">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">AI-native marketing CRM</p>
+          <h1>Customer Re-Engagement Agent</h1>
+          <p class="hero-text">
+            Find customers slipping away, understand why they are at risk, choose the
+            best channel, and launch personalized win-back campaigns in minutes.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#agent">Open agent desk</a>
+            <a class="secondary-action" href="#operations">View live campaigns</a>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="AI marketing command center preview">
+          <img
+            src="assets/agent-command-center.png"
+            alt="AI marketing dashboard with channel recommendations and campaign cards"
+          />
+        </div>
+      </section>
+
+      <section class="signal-strip" aria-label="Live engagement signals">
+        <article>
+          <span>At-risk revenue</span>
+          <strong id="totalRecovery">Rs. 8.4L</strong>
+          <small>recoverable this month</small>
+        </article>
+        <article>
+          <span>Customers flagged</span>
+          <strong id="flaggedCount">0</strong>
+          <small>need reactivation</small>
+        </article>
+        <article>
+          <span>Best channel</span>
+          <strong id="bestChannel">WhatsApp</strong>
+          <small>for 46% of this batch</small>
+        </article>
+        <article>
+          <span>Predicted lift</span>
+          <strong id="predictedLift">18.7%</strong>
+          <small>vs. generic blasts</small>
+        </article>
+      </section>
+
+      <section class="dashboard-grid" aria-label="Campaign control dashboard">
+        <article class="control-panel">
+          <div class="panel-topline">
+            <div>
+              <p class="eyebrow">Control room</p>
+              <h2>Build the engagement run</h2>
+            </div>
+            <span class="live-chip">Live model</span>
+          </div>
+          <div class="option-grid">
+            <label>
+              Goal
+              <select id="goalSelect">
+                <option value="Win-back revenue">Win-back revenue</option>
+                <option value="Recover abandoned carts">Recover abandoned carts</option>
+                <option value="Increase repeat purchase">Increase repeat purchase</option>
+                <option value="Protect VIP customers">Protect VIP customers</option>
+              </select>
+            </label>
+            <label>
+              Service route
+              <select id="routeSelect">
+                <option value="AI recommended">AI recommended</option>
+                <option value="WhatsApp first">WhatsApp first</option>
+                <option value="Email first">Email first</option>
+                <option value="Low-cost route">Low-cost route</option>
+              </select>
+            </label>
+            <label>
+              Send window
+              <select id="windowSelect">
+                <option value="Today 6:00 PM">Today 6:00 PM</option>
+                <option value="Tomorrow 10:00 AM">Tomorrow 10:00 AM</option>
+                <option value="Weekend evening">Weekend evening</option>
+              </select>
+            </label>
+            <label>
+              Audience search
+              <input id="audienceSearch" type="search" placeholder="Search segment or intent" />
+            </label>
+          </div>
+          <label class="budget-control">
+            Budget cap
+            <input id="budgetRange" type="range" min="10000" max="150000" step="5000" value="60000" />
+            <span id="budgetValue">Rs. 60K</span>
+          </label>
+        </article>
+
+        <article class="ai-recommendation-card">
+          <div class="recommendation-card-header">
+            <div class="ai-icon" aria-hidden="true">AI</div>
+            <div>
+              <p class="eyebrow">AI Recommendation</p>
+              <h3 id="compactAudienceTitle">Sleeping Loyalists</h3>
+            </div>
+          </div>
+
+          <div class="compact-recommendation-grid">
+            <div>
+              <span>Audience</span>
+              <strong id="compactAudience">Sleeping Loyalists</strong>
+            </div>
+            <div>
+              <span>Best Channel</span>
+              <strong id="compactChannel">WhatsApp</strong>
+            </div>
+            <div>
+              <span>Expected Recovery</span>
+              <strong id="compactRecovery">Rs. 5.9L</strong>
+            </div>
+            <div>
+              <span>Confidence</span>
+              <strong id="confidenceValue">87%</strong>
+            </div>
+          </div>
+
+          <div class="confidence-bar compact" aria-label="AI confidence score">
+            <span id="confidenceFill" style="--confidence: 87%"></span>
+          </div>
+
+          <div class="compact-actions">
+            <button class="ghost-button" id="viewReasoning">View Reasoning</button>
+            <button class="ghost-button" id="viewForecast">View Forecast</button>
+          </div>
+        </article>
+      </section>
+
+      <div class="modal-backdrop" id="modalBackdrop" hidden></div>
+
+      <section class="modal-panel" id="reasoningModal" role="dialog" aria-modal="true" aria-labelledby="reasoningModalTitle" hidden>
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">AI Decision Engine</p>
+            <h2 id="reasoningModalTitle">AI Decision Engine</h2>
+          </div>
+          <button class="icon-button modal-close" data-close-modal aria-label="Close reasoning modal">X</button>
+        </div>
+        <div class="modal-body">
+          <article class="reasoning-block light">
+            <h3>Audience Analysis</h3>
+            <p><strong id="modalAudienceCount">248 customers</strong> match this pattern because:</p>
+            <ul>
+              <li>No purchase in the last 45+ days</li>
+              <li>Average order value above Rs. 1,500</li>
+              <li>Previously engaged with loyalty campaigns</li>
+              <li>Marketing consent available</li>
+            </ul>
+          </article>
+          <article class="reasoning-block light">
+            <h3>Channel Analysis</h3>
+            <p><strong id="modalChannel">WhatsApp</strong> selected because:</p>
+            <ul>
+              <li>92% reachable audience</li>
+              <li>Highest historical engagement rate</li>
+              <li>Lowest cost per conversion</li>
+              <li>Strong mobile activity</li>
+            </ul>
+            <div class="channel-score-chips light" aria-label="Channel scores">
+              <span class="selected" data-channel-chip="WhatsApp">WhatsApp 92</span>
+              <span data-channel-chip="Email">Email 76</span>
+              <span data-channel-chip="SMS">SMS 63</span>
+              <span data-channel-chip="App Push">App Push 58</span>
+            </div>
+          </article>
+          <article class="recommendation-summary light">
+            <h3>Recommendation</h3>
+            <p id="reasoningSummary">Launch a WhatsApp loyalty win-back campaign during today's send window.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="modal-panel" id="forecastModal" role="dialog" aria-modal="true" aria-labelledby="forecastModalTitle" hidden>
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">Forecast</p>
+            <h2 id="forecastModalTitle">Campaign Forecast</h2>
+          </div>
+          <button class="icon-button modal-close" data-close-modal aria-label="Close forecast modal">X</button>
+        </div>
+        <div class="modal-body">
+          <div class="forecast-grid modal-forecast-grid">
+            <div>
+              <span>Expected Recovery</span>
+              <strong id="forecastRecovery">Rs. 5.9L</strong>
+            </div>
+            <div>
+              <span>Predicted Lift</span>
+              <strong id="forecastLift">31%</strong>
+            </div>
+            <div>
+              <span>Projected Conversions</span>
+              <strong id="forecastConversions">31 customers</strong>
+            </div>
+            <div>
+              <span>Audience Size</span>
+              <strong id="forecastAudienceSize">248 customers</strong>
+            </div>
+            <div>
+              <span>Confidence</span>
+              <strong id="forecastConfidence">87%</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="data-section" id="data">
+        <div class="section-heading">
+          <p class="eyebrow">Real customer data</p>
+          <h2>Import customers or add them manually</h2>
+          <p>
+            The agent recalculates segments from the customer table. Data stays in
+            this browser so the prototype can run without a backend.
+          </p>
+        </div>
+        <div class="data-grid">
+          <article class="data-card">
+            <div class="panel-topline">
+              <div>
+                <p class="eyebrow">CSV import</p>
+                <h3>Paste customer rows</h3>
+              </div>
+              <button class="ghost-button" id="loadSampleData">Load sample</button>
+            </div>
+            <textarea id="csvInput" spellcheck="false" placeholder="name,email,phone,lastOrderDate,totalSpent,orderCount,cartValue,birthday,preferredChannel,consent&#10;Aarav,aarav@example.com,+919900000001,2026-03-01,18400,8,0,1998-06-20,WhatsApp,true"></textarea>
+            <div class="data-actions">
+              <button class="primary-action compact-action" id="importCsv">Import CSV</button>
+              <button class="secondary-action compact-action" id="exportCsv">Export CSV</button>
+              <button class="ghost-button" id="clearCustomers">Clear customers</button>
+            </div>
+          </article>
+
+          <article class="data-card">
+            <p class="eyebrow">Manual entry</p>
+            <h3>Add one customer</h3>
+            <form class="manual-form" id="customerForm">
+              <input name="name" required placeholder="Customer name" />
+              <input name="email" type="email" placeholder="Email" />
+              <input name="phone" placeholder="Phone" />
+              <input name="lastOrderDate" type="date" required />
+              <input name="totalSpent" type="number" min="0" step="100" placeholder="Total spent" />
+              <input name="orderCount" type="number" min="0" step="1" placeholder="Orders" />
+              <input name="cartValue" type="number" min="0" step="100" placeholder="Cart value" />
+              <input name="birthday" type="date" />
+              <select name="preferredChannel">
+                <option>WhatsApp</option>
+                <option>Email</option>
+                <option>SMS</option>
+                <option>App Push</option>
+              </select>
+              <label class="consent-check">
+                <input name="consent" type="checkbox" checked />
+                Marketing consent
+              </label>
+              <button class="primary-action compact-action" type="submit">Add customer</button>
+            </form>
+          </article>
+        </div>
+
+        <div class="operations-shell customer-shell">
+          <div class="operations-toolbar">
+            <strong id="customerSummary">0 customers loaded</strong>
+            <span class="live-chip" id="dataHealth">Awaiting data</span>
+          </div>
+          <div class="customer-table" id="customerTable"></div>
+        </div>
+      </section>
+
+      <section id="agent" class="workspace">
+        <aside class="agent-panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Agent monitor</p>
+            <h2>Customers that need attention</h2>
+          </div>
+          <div class="customer-list" aria-label="At-risk customer segments">
+            <button class="customer-card active" data-segment="sleeping">
+              <span class="risk-dot high"></span>
+              <strong>Sleeping loyalists</strong>
+              <small>No order in 60 days, high lifetime value</small>
+            </button>
+            <button class="customer-card" data-segment="cart">
+              <span class="risk-dot medium"></span>
+              <strong>Cart abandoners</strong>
+              <small>Browsed twice, cart value above Rs. 2,000</small>
+            </button>
+            <button class="customer-card" data-segment="birthday">
+              <span class="risk-dot low"></span>
+              <strong>Birthday window</strong>
+              <small>Birthday in 7 days, coupon responsive</small>
+            </button>
+            <button class="customer-card" data-segment="vip">
+              <span class="risk-dot high"></span>
+              <strong>VIP churn watch</strong>
+              <small>Premium buyers with declining frequency</small>
+            </button>
+          </div>
+        </aside>
+
+        <section class="agent-desk" aria-live="polite">
+          <div class="desk-header">
+            <div>
+              <p class="eyebrow">Recommendation</p>
+              <h2 id="segmentTitle">Sleeping loyalists</h2>
+            </div>
+            <button class="icon-button" id="rerunAgent" aria-label="Refresh recommendation">
+              <span aria-hidden="true">R</span>
+            </button>
+          </div>
+
+          <div class="recommendation-grid">
+            <article class="recommendation-card primary">
+              <span class="card-label">Agent reasoning</span>
+              <p id="agentReason">
+                These customers used to buy every month but have missed two cycles.
+                A low-friction WhatsApp reminder with loyalty points is likely to
+                recover intent fastest.
+              </p>
+            </article>
+            <article class="recommendation-card">
+              <span class="card-label">Audience</span>
+              <strong id="audienceSize">684 customers</strong>
+              <small id="audienceValue">Rs. 3.1L predicted recovery</small>
+            </article>
+            <article class="recommendation-card">
+              <span class="card-label">Next best action</span>
+              <strong id="nextAction">Send loyalty win-back offer</strong>
+              <small id="urgency">Launch before Friday evening</small>
+            </article>
+          </div>
+
+          <div class="campaign-builder" id="campaigns">
+            <div class="builder-top">
+              <div>
+                <p class="eyebrow">Campaign draft</p>
+                <h3 id="campaignName">Loyalty Wake-Up</h3>
+              </div>
+              <span class="status-pill" id="draftStatus">Ready for approval</span>
+            </div>
+            <div class="message-preview">
+              <div class="phone-frame">
+                <div class="phone-top"></div>
+                <p id="messageText">
+                  We saved your loyalty perks. Come back this week and get 15%
+                  off your next order.
+                </p>
+                <button id="launchCampaign">Launch</button>
+              </div>
+              <div class="campaign-metrics">
+                <div>
+                  <span>Expected opens</span>
+                  <strong id="expectedOpens">61%</strong>
+                </div>
+                <div>
+                  <span>Expected conversions</span>
+                  <strong id="expectedConversions">9.8%</strong>
+                </div>
+                <div>
+                  <span>Offer cost</span>
+                  <strong id="offerCost">Rs. 38K</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="active-section" id="operations" aria-label="Launched campaign operations">
+        <div class="section-heading">
+          <p class="eyebrow">Campaign operations</p>
+          <h2>Launched campaigns keep moving</h2>
+          <p>
+            When you launch a campaign, it enters this operations queue, simulates
+            delivery, and keeps the record saved in this browser.
+          </p>
+        </div>
+        <div class="operations-shell">
+          <div class="operations-toolbar">
+            <strong>Live campaigns</strong>
+            <button id="clearCampaigns" class="ghost-button">Clear demo data</button>
+          </div>
+          <div class="campaign-table" id="campaignTable"></div>
+        </div>
+      </section>
+
+      <section class="lifecycle-section" id="lifecycle" aria-label="Communication lifecycle tracking">
+        <div class="section-heading">
+          <p class="eyebrow">Communication lifecycle</p>
+          <h2>Track every message after launch</h2>
+          <p>
+            RecallIQ simulates the full communication lifecycle from send to delivered
+            to opened to read to clicked to purchased, mirroring real-world campaign
+            engagement tracking.
+          </p>
+        </div>
+
+        <div class="lifecycle-metrics" id="lifecycleMetrics"></div>
+
+        <div class="lifecycle-shell">
+          <div class="lifecycle-toolbar">
+            <div>
+              <strong>Lifecycle event stream</strong>
+              <small>Campaign Launch -> Sent -> Delivered -> Opened -> Read -> Clicked -> Purchased</small>
+            </div>
+            <div class="lifecycle-controls" aria-label="Lifecycle simulation controls">
+              <button class="ghost-button" data-simulate-status="Delivered">Simulate Delivery</button>
+              <button class="ghost-button" data-simulate-status="Opened">Simulate Open</button>
+              <button class="ghost-button" data-simulate-status="Clicked">Simulate Click</button>
+              <button class="ghost-button" data-simulate-status="Purchased">Simulate Purchase</button>
+            </div>
+          </div>
+          <div class="lifecycle-table" id="lifecycleTable"></div>
+        </div>
+      </section>
+
+      <section id="channels" class="channel-section">
+        <div class="section-heading">
+          <p class="eyebrow">Channel service recommendation</p>
+          <h2>Let the agent pick the right route for every customer</h2>
+          <p>
+            RecallIQ scores each channel by purchase intent, message sensitivity,
+            consent, past response rate, and cost per conversion.
+          </p>
+        </div>
+
+        <div class="channel-grid">
+          <article class="channel-card selected">
+            <div class="channel-icon">W</div>
+            <h3>WhatsApp</h3>
+            <p>Best for urgent offers, loyal customers, and high-intent segments.</p>
+            <progress value="92" max="100"></progress>
+            <span>92 match score</span>
+          </article>
+          <article class="channel-card">
+            <div class="channel-icon">E</div>
+            <h3>Email</h3>
+            <p>Best for richer storytelling, catalog drops, and large segments.</p>
+            <progress value="76" max="100"></progress>
+            <span>76 match score</span>
+          </article>
+          <article class="channel-card">
+            <div class="channel-icon">S</div>
+            <h3>SMS</h3>
+            <p>Best for compact reminders when app or WhatsApp reach is limited.</p>
+            <progress value="63" max="100"></progress>
+            <span>63 match score</span>
+          </article>
+          <article class="channel-card">
+            <div class="channel-icon">A</div>
+            <h3>App Push</h3>
+            <p>Best for active app users, flash sale alerts, and low-cost nudges.</p>
+            <progress value="58" max="100"></progress>
+            <span>58 match score</span>
+          </article>
+        </div>
+      </section>
+
+      <section id="insights" class="insights-section">
+        <div class="section-heading">
+          <p class="eyebrow">Performance intelligence</p>
+          <h2>Measure what changed after the agent acted</h2>
+        </div>
+        <div class="insight-layout">
+          <article class="chart-panel">
+            <div class="chart-bars" aria-label="Campaign performance chart">
+              <span style="--bar-height: 44%"></span>
+              <span style="--bar-height: 68%"></span>
+              <span style="--bar-height: 52%"></span>
+              <span style="--bar-height: 86%"></span>
+              <span style="--bar-height: 73%"></span>
+              <span style="--bar-height: 91%"></span>
+            </div>
+            <div class="chart-caption">
+              <strong>Revenue recovery trend</strong>
+              <small>Last 6 campaigns</small>
+            </div>
+          </article>
+          <article class="explain-panel">
+            <h3>Why this works</h3>
+            <p>
+              The agent explains the risk, recommends the channel, drafts the
+              message, estimates impact, and keeps the marketer in control before launch.
+            </p>
+            <ul>
+              <li>Natural language campaign goals</li>
+              <li>AI channel routing and consent checks</li>
+              <li>Personalized message drafts</li>
+              <li>Approval workflow before sending</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      Campaign queued. The agent will monitor responses in real time.
+    </div>
+
+    <script src="script.js"></script>
+  <script src="ai-integration.js"></script>
+
+<section id="recalliq-customer-ai" style="margin:24px 0;padding:22px;border:1px solid #e5e7eb;border-radius:18px;background:#fff">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+    <div>
+      <h2 style="margin:0 0 6px">AI Customer Analysis</h2>
+      <p style="margin:0;color:#6b7280">Select a customer to predict churn risk and generate a re-engagement recommendation.</p>
+    </div>
+    <select id="ai-customer-select" style="min-width:240px;padding:10px;border:1px solid #d1d5db;border-radius:10px">
+      <option value="">Select a customer</option>
+    </select>
+  </div>
+  <div id="ai-customer-result" style="margin-top:18px"></div>
+</section>
+<script>
+(function(){
+  const select=document.getElementById("ai-customer-select");
+  const result=document.getElementById("ai-customer-result");
+  if(!select||!result)return;
+
+  function getCustomers(){
+    const keys=["customers","recalliq_customers","customerData","recalliqCustomers"];
+    for(const key of keys){
+      try{
+        const v=JSON.parse(localStorage.getItem(key));
+        if(Array.isArray(v)&&v.length)return v;
+      }catch(e){}
+    }
+    return [];
+  }
+
+  function customerName(c){
+    return c.name || [c.firstName,c.lastName].filter(Boolean).join(" ") || c.email || "Unnamed customer";
+  }
+
+  function renderCustomers(){
+    const customers=getCustomers();
+    select.innerHTML='<option value="">Select a customer</option>';
+    customers.forEach((c,i)=>{
+      const opt=document.createElement("option");
+      opt.value=String(c.id ?? c._id ?? i);
+      opt.textContent=customerName(c);
+      opt.dataset.index=String(i);
+      select.appendChild(opt);
+    });
+    window.__recalliqCustomers=customers;
+  }
+
+  function featureCustomer(c){
+    return {
+      id:c.id??c._id,
+      daysSinceLastOrder:Number(c.daysSinceLastOrder??c.days_since_last_order??c.recencyDays??c.daysSinceLastPurchase??0),
+      orderCount:Number(c.orderCount??c.order_count??c.orders??c.totalOrders??0),
+      totalSpent:Number(c.totalSpent??c.total_spent??c.spent??c.lifetimeValue??0),
+      engagementScore:Number(c.engagementScore??c.engagement_score??c.engagement??50),
+      supportTickets:Number(c.supportTickets??c.support_tickets??c.tickets??0),
+      cartValue:Number(c.cartValue??c.cart_value??c.cartTotal??0)
+    };
+  }
+
+  async function analyze(c){
+    result.innerHTML='<div style="padding:14px;border-radius:12px;background:#f9fafb">Analyzing customer with RecallIQ ML...</div>';
+    try{
+      const data=await window.RecallIQAI.predictCustomerRisk(featureCustomer(c));
+      const p=data.prediction||data;
+      const risk=p.risk||"UNKNOWN";
+      const riskLabel=risk==="HIGH"?"High Risk":risk==="MEDIUM"?"Medium Risk":"Low Risk";
+      result.innerHTML=`
+        <div style="display:grid;gap:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div><strong style="font-size:20px">${customerName(c)}</strong><div style="color:#6b7280">AI churn probability</div></div>
+            <div style="font-size:30px;font-weight:700">${p.churn_percentage ?? Math.round((p.churn_probability||0)*100)}%</div>
+          </div>
+          <div style="padding:14px;border-radius:12px;background:#f9fafb">
+            <strong>${riskLabel}</strong>
+            <div style="margin-top:10px"><b>Why:</b> ${(p.reasons||[]).join(" • ")}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+            <div><small>Recommended action</small><br><b>${p.recommended_action||"—"}</b></div>
+            <div><small>Channel</small><br><b>${p.recommended_channel||"—"}</b></div>
+            <div><small>Offer</small><br><b>${p.recommended_offer||"—"}</b></div>
+          </div>
+          <button id="ai-create-campaign" type="button" style="padding:10px 14px;border:0;border-radius:10px;cursor:pointer">Use Recommendation for Campaign</button>
+        </div>`;
+      document.getElementById("ai-create-campaign")?.addEventListener("click",()=>{
+        const campaign={customerId:c.id??c._id,customer:customerName(c),action:p.recommended_action,channel:p.recommended_channel,offer:p.recommended_offer,createdAt:new Date().toISOString()};
+        try{
+          const old=JSON.parse(localStorage.getItem("recalliq_ai_campaigns")||"[]");
+          old.push(campaign); localStorage.setItem("recalliq_ai_campaigns",JSON.stringify(old));
+          result.insertAdjacentHTML("beforeend",'<div style="margin-top:10px;padding:10px;border-radius:10px;background:#ecfdf5">Recommendation saved as a campaign draft.</div>');
+        }catch(e){}
+      });
+    }catch(e){
+      result.innerHTML='<div style="padding:14px;border-radius:12px;background:#fff7ed;color:#9a3412"><b>AI service is not running.</b><br>Start the Python ML service and Node backend, then try again.</div>';
+    }
+  }
+
+  select.addEventListener("change",()=>{
+    const id=select.value;
+    if(!id){result.innerHTML="";return;}
+    const customers=window.__recalliqCustomers||[];
+    const c=customers.find((x,i)=>String(x.id??x._id??i)===id);
+    if(c) analyze(c);
+  });
+
+  renderCustomers();
+  window.addEventListener("storage",renderCustomers);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "recalliq-customer-reengagement-agent",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve .",
+    "serve": "npx --yes serve ."
+  }
+}
